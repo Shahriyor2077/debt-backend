@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { prisma } from "../lib/prisma";
-import { loginSchema } from "../validators/schemas";
-import { createSession, deleteSession, validateSession, getSession, requireAuth } from "../middleware/auth";
+import { prisma } from "../lib/prisma.js";
+import { loginSchema } from "../validators/schemas.js";
+import { createSession, deleteSession, validateSession, getSession, requireAuth } from "../middleware/auth.js";
 
 const router = Router();
 

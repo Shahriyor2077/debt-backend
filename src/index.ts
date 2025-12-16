@@ -1,15 +1,22 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import authRoutes from "./routes/auth.routes";
-import customerRoutes from "./routes/customer.routes";
-import debtRoutes from "./routes/debt.routes";
-import paymentRoutes from "./routes/payment.routes";
-import statsRoutes from "./routes/stats.routes";
+import authRoutes from "./routes/auth.routes.js";
+import customerRoutes from "./routes/customer.routes.js";
+import debtRoutes from "./routes/debt.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
+import statsRoutes from "./routes/stats.routes.js";
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = process.env.FRONTEND_URL
+    ? [process.env.FRONTEND_URL, "http://localhost:5173"]
+    : ["http://localhost:5173"];
+
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+}));
 app.use(express.json());
 
 // Routes
