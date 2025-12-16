@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  telefon       String   @unique @db.VarChar(20)
+  ism           String
+  rol           String   @default("foydalanuvchi") @db.VarChar(20)
+  faol          Boolean  @default(true)
+  yaratilganSana DateTime @default(now()) @map("yaratilgan_sana")
+
+  @@map("users")
+}
+
+model Customer {
+  id            Int      @id @default(autoincrement())
+  ism           String
+  telefon       String   @db.VarChar(20)
+  manzil        String?
+  izoh          String?
+  faol          Boolean  @default(true)
+  yaratilganSana DateTime @default(now()) @map("yaratilgan_sana")
+  
+  qarzlar       Debt[]
+
+  @@map("customers")
+}
+
+model Debt {
+  id              Int      @id @default(autoincrement())
+  mijozId         Int      @map("mijoz_id")
+  tovarNomi       String   @map("tovar_nomi")
+  umumiySumma     Decimal  @map("umumiy_summa") @db.Decimal(12, 2)
+  tolanganSumma   Decimal  @default(0) @map("tolangan_summa") @db.Decimal(12, 2)
+  berilganSana    DateTime @default(now()) @map("berilgan_sana")
+  qaytarishMuddati DateTime @map("qaytarish_muddati")
+  holati          String   @default("to'lanmagan") @db.VarChar(20)
+  arxivlangan     Boolean  @default(false)
+  yaratilganSana  DateTime @default(now()) @map("yaratilgan_sana")
+
+  mijoz           Customer @relation(fields: [mijozId], references: [id])
+  tolovlar        Payment[]
+
+  @@map("debts")
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  qarzId      Int      @map("qarz_id")
+  summa       Decimal  @db.Decimal(12, 2)
+  tolovSanasi DateTime @default(now()) @map("tolov_sanasi")
+  izoh        String?
+
+  qarz        Debt     @relation(fields: [qarzId], references: [id])
+
+  @@map("payments")
+}
