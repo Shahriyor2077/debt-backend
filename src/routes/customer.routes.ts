@@ -42,6 +42,7 @@ router.post("/", async (req, res) => {
         const customer = await prisma.customer.create({ data: value });
         res.status(201).json(customer);
     } catch (error) {
+        console.error("Mijoz yaratishda xatolik:", error);
         res.status(500).json({ error: "Mijoz yaratishda xatolik" });
     }
 });
@@ -65,12 +66,20 @@ router.patch("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
-        await prisma.customer.update({
-            where: { id: parseInt(req.params.id) },
-            data: { faol: false },
-        });
+        const id = parseInt(req.params.id);
+
+        // Mijozga bog'langan qarzlar bormi tekshirish
+        const debtsCount = await prisma.debt.count({ where: { mijozId: id } });
+        if (debtsCount > 0) {
+            return res.status(400).json({
+                error: "Bu mijozga bog'langan qarzlar bor. Avval qarzlarni o'chiring.",
+            });
+        }
+
+        await prisma.customer.delete({ where: { id } });
         res.status(204).send();
     } catch (error) {
+        console.error("Mijozni o'chirishda xatolik:", error);
         res.status(500).json({ error: "Mijozni o'chirishda xatolik" });
     }
 });

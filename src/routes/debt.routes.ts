@@ -106,9 +106,18 @@ router.patch("/:id/archive", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
-        await prisma.debt.delete({ where: { id: parseInt(req.params.id) } });
+        const id = parseInt(req.params.id);
+
+        // Avval qarz mavjudligini tekshiramiz
+        const debt = await prisma.debt.findUnique({ where: { id } });
+        if (!debt) {
+            return res.status(404).json({ error: "Qarz topilmadi" });
+        }
+
+        await prisma.debt.delete({ where: { id } });
         res.status(204).send();
     } catch (error) {
+        console.error("Qarzni o'chirishda xatolik:", error);
         res.status(500).json({ error: "Qarzni o'chirishda xatolik" });
     }
 });

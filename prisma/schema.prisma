@@ -57,7 +57,7 @@ model Payment {
   tolovSanasi DateTime @default(now()) @map("tolov_sanasi")
   izoh        String?
 
-  qarz        Debt     @relation(fields: [qarzId], references: [id])
+  qarz        Debt     @relation(fields: [qarzId], references: [id], onDelete: Cascade)
 
   @@map("payments")
 }

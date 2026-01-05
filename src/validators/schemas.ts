@@ -18,6 +18,7 @@ export const customerSchema = Joi.object({
     }),
     manzil: Joi.string().allow("", null),
     izoh: Joi.string().allow("", null),
+    faol: Joi.boolean(),
 });
 
 export const debtSchema = Joi.object({
